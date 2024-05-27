@@ -1,11 +1,10 @@
 /******************************************************************************
  *                                                                            *
- * Copyright 2024 MachineWare GmbH                                            *
+ * Copyright (C) 2024 MachineWare GmbH                                        *
  * All Rights Reserved                                                        *
  *                                                                            *
- * This is unpublished proprietary work owned by MachineWare GmbH. It may be  *
- * used, modified and distributed in accordance to the license specified by   *
- * the license file in the root directory of this project.                    *
+ * This is work is licensed under the terms described in the LICENSE file     *
+ * found in the root directory of this source tree.                           *
  *                                                                            *
  ******************************************************************************/
 
