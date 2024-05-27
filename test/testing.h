@@ -9,19 +9,20 @@
  *                                                                            *
  ******************************************************************************/
 
-#ifndef VCML_TESTING_H
-#define VCML_TESTING_H
+#ifndef VCML_CCI_TESTING_H
+#define VCML_CCI_TESTING_H
+
+#include <string>
+#include <vector>
 
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include <mwr.h>
 #include <systemc>
 #include <vcml.h>
-#include <mwr.h>
 
 using namespace ::testing;
-using namespace ::sc_core;
-using namespace ::vcml;
 
 #define ASSERT_OK(tlmcall) ASSERT_EQ(tlmcall, TLM_OK_RESPONSE)
 #define ASSERT_AE(tlmcall) ASSERT_EQ(tlmcall, TLM_ADDRESS_ERROR_RESPONSE)
@@ -34,28 +35,28 @@ using namespace ::vcml;
 #define EXPECT_SUCCESS(fn) EXPECT_TRUE(vcml::success(fn))
 #define EXPECT_FAILURE(fn) EXPECT_TRUE(vcml::failure(fn))
 
-class test_base : public component
+class test_base : public vcml::component
 {
 private:
-    tracer_term m_tracer;
+    vcml::tracer_term m_tracer;
     mwr::publishers::terminal m_logger;
 
-    generic::reset m_reset;
-    generic::clock m_clock;
+    vcml::generic::reset m_reset;
+    vcml::generic::clock m_clock;
 
     void run();
 
 public:
     test_base() = delete;
-    test_base(const sc_module_name& nm);
+    test_base(const sc_core::sc_module_name& nm);
     virtual ~test_base();
 
     virtual void run_test() = 0;
     virtual void finalize_test();
 };
 
-extern vector<string> args;
+extern std::vector<std::string> args;
 
-string get_resource_path(const string& name);
+std::string get_resource_path(const std::string& name);
 
 #endif

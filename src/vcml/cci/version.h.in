@@ -1,0 +1,29 @@
+/******************************************************************************
+ *                                                                            *
+ * Copyright 2024 MachineWare GmbH                                            *
+ * All Rights Reserved                                                        *
+ *                                                                            *
+ * This is unpublished proprietary work and may not be used or disclosed to   *
+ * third parties, copied or duplicated in any form, in whole or in part,      *
+ * without prior written permission of the authors.                           *
+ *                                                                            *
+ ******************************************************************************/
+
+#ifndef VCML_CCI_VERSION_H
+#define VCML_CCI_VERSION_H
+
+#define VCML_CCI_VERSION_MAJOR    @PROJECT_VERSION_MAJOR@
+#define VCML_CCI_VERSION_MINOR    @PROJECT_VERSION_MINOR@
+#define VCML_CCI_VERSION_PATCH    @PROJECT_VERSION_PATCH@
+
+#define VCML_CCI_GIT_REV          "@VCML_CCI_GIT_REV@"
+#define VCML_CCI_GIT_REV_SHORT    "@VCML_CCI_GIT_REV_SHORT@"
+
+#define VCML_CCI_VERSION          @VCML_CCI_VERSION_INT@
+#define VCML_CCI_VERSION_STRING   "@VCML_CCI_VERSION_STRING@"
+
+#include <mwr.h>
+
+MWR_DECLARE_MODULE_COPYRIGHT(VCML_CCI, "vcml-cci", 2023)
+
+#endif

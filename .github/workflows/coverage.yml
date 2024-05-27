@@ -19,31 +19,31 @@ jobs:
     runs-on: self-hosted-ubuntu-22.04
 
     steps:
-    - name: Checkout Model
+    - name: Checkout VCML CCI
       uses: actions/checkout@v4
       with:
         submodules: 'recursive'
         token: ${{secrets.CI_TOKEN}}
 
-    - name: Configure Model
-      run: cmake -B BUILD -G Ninja -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DTEMPLATE_MODEL_TESTS=ON -DTEMPLATE_MODEL_COVERAGE=ON .
+    - name: Configure
+      run: cmake -B BUILD -G Ninja -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DVCML_CCI_TESTS=ON -DVCML_CCI_COVERAGE=ON .
 
-    - name: Build Model
+    - name: Build
       run: cmake --build BUILD --config ${{env.BUILD_TYPE}} -j $(nproc)
 
-    - name: Test Model
+    - name: Test
       working-directory: ${{github.workspace}}/BUILD
       run: ctest -C ${{env.BUILD_TYPE}} --output-on-failure
 
     - name: Generate Coverage Report
       run: |
-        mkdir -p model-coverage-report
-        gcovr --html-details -f 'include/*' -f 'src/*' --output model-coverage-report/model.html --exclude-lines-by-pattern '\s*(VCML|MWR)_ERROR.*'
+        mkdir -p vcml-cci-coverage-report
+        gcovr --html-details -f 'include/*' -f 'src/*' --output vcml-cci-coverage-report/vcml-cci.html --exclude-lines-by-pattern '\s*(VCML|MWR)_ERROR.*'
 
     - name: Upload Coverage Report
       uses: actions/upload-artifact@v4
       with:
         retention-days: 3
-        name: model-coverage-report
-        path: model-coverage-report/
+        name: vcml-cci-coverage-report
+        path: vcml-cci-coverage-report/
 

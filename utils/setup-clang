@@ -41,8 +41,8 @@ for type in $builds; do (
           -DCMAKE_BUILD_TYPE=$type           \
           -DCMAKE_INSTALL_PREFIX=$prefix     \
           -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-          -DTEMPLATE_MODEL_TESTS=ON          \
-          -DTEMPLATE_MODEL_LINTER=$linter    \
+          -DVCML_CCI_TESTS=ON                \
+          -DVCML_CCI_LINTER=$linter          \
           $home
 
     cmake --build $build -j $(nproc) -- install

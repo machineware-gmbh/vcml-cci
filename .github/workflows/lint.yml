@@ -21,14 +21,14 @@ jobs:
     runs-on: self-hosted-ubuntu-22.04
 
     steps:
-    - name: Checkout Model
+    - name: Checkout VCML-CCI
       uses: actions/checkout@v4
       with:
         submodules: 'recursive'
         token: ${{secrets.CI_TOKEN}}
 
     - name: Configure
-      run: cmake -B BUILD -G Ninja -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DTEMPLATE_MODEL_TESTS=ON -DTEMPLATE_MODEL_LINTER=clang-tidy .
+      run: cmake -B BUILD -G Ninja -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DVCML_CCI_TESTS=ON -DVCML_CCI_LINTER=clang-tidy .
 
     - name: Build
       run: cmake --build BUILD --config ${{env.BUILD_TYPE}} -j $(nproc)

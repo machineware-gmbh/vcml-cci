@@ -1,6 +1,6 @@
 /******************************************************************************
  *                                                                            *
- * Copyright 2022 MachineWare GmbH                                            *
+ * Copyright 2024 MachineWare GmbH                                            *
  * All Rights Reserved                                                        *
  *                                                                            *
  * This is unpublished proprietary work and may not be used or disclosed to   *
@@ -9,21 +9,11 @@
  *                                                                            *
  ******************************************************************************/
 
-#ifndef TEMPLATE_MODEL_VERSION_H
-#define TEMPLATE_MODEL_VERSION_H
+#ifndef VCML_CCI_H
+#define VCML_CCI_H
 
-#define TEMPLATE_MODEL_VERSION_MAJOR    @PROJECT_VERSION_MAJOR@
-#define TEMPLATE_MODEL_VERSION_MINOR    @PROJECT_VERSION_MINOR@
-#define TEMPLATE_MODEL_VERSION_PATCH    @PROJECT_VERSION_PATCH@
-
-#define TEMPLATE_MODEL_GIT_REV          "@TEMPLATE_MODEL_GIT_REV@"
-#define TEMPLATE_MODEL_GIT_REV_SHORT    "@TEMPLATE_MODEL_GIT_REV_SHORT@"
-
-#define TEMPLATE_MODEL_VERSION          @TEMPLATE_MODEL_VERSION_INT@
-#define TEMPLATE_MODEL_VERSION_STRING   "@TEMPLATE_MODEL_VERSION_STRING@"
-
-#include <mwr.h>
-
-MWR_DECLARE_MODULE_COPYRIGHT(TEMPLATE_MODEL, "template-model", 2022)
+#include "vcml/cci/types.h"
+#include "vcml/cci/version.h"
+#include "vcml/cci/broker.h"
 
 #endif

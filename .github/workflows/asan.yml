@@ -27,14 +27,14 @@ jobs:
         sanitizer: [ASAN, TSAN, UBSAN]
 
     steps:
-    - name: Checkout Model
+    - name: Checkout VCML CCI
       uses: actions/checkout@v4
       with:
         submodules: 'recursive'
         token: ${{secrets.CI_TOKEN}}
 
     - name: Configure
-      run: cmake -B BUILD -G Ninja -DCMAKE_BUILD_TYPE=${{matrix.sanitizer}} -DTEMPLATE_MODEL_TESTS=ON .
+      run: cmake -B BUILD -G Ninja -DCMAKE_BUILD_TYPE=${{matrix.sanitizer}} -DVCML_CCI_TESTS=ON .
 
     - name: Build
       run: cmake --build BUILD --config ${{matrix.sanitizer}} -j $(nproc)

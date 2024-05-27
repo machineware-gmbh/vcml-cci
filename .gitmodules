@@ -6,3 +6,7 @@
 	path = test/googletest
 	url = https://github.com/google/googletest
 	branch = main
+[submodule "cci"]
+	path = cci
+	url = https://github.com/accellera-official/cci
+	branch = main

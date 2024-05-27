@@ -1,6 +1,6 @@
  ##############################################################################
  #                                                                            #
- # Copyright 2022 MachineWare GmbH                                            #
+ # Copyright 2024 MachineWare GmbH                                            #
  # All Rights Reserved                                                        #
  #                                                                            #
  # This is unpublished proprietary work and may not be used or disclosed to   #
@@ -10,7 +10,7 @@
  ##############################################################################
 
 cmake_minimum_required(VERSION 3.11)
-project(template-model VERSION 2022.02.22 LANGUAGES C CXX)
+project(vcml-cci VERSION 2024.05.27 LANGUAGES CXX)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include(FindGithubRepo)
@@ -21,46 +21,66 @@ find_package(Git REQUIRED)
 find_github_repo(mwr "machineware-gmbh/mwr")
 find_github_repo(vcml "machineware-gmbh/vcml")
 
-option(TEMPLATE_MODEL_TESTS "Build unit tests" OFF)
-option(TEMPLATE_MODEL_COVERAGE "Generate coverage data" OFF)
-set(TEMPLATE_MODEL_LINTER "" CACHE STRING "Code linter to use")
+option(VCML_CCI_TESTS "Build unit tests" OFF)
+option(VCML_CCI_COVERAGE "Generate coverage data" OFF)
+set(VCML_CCI_LINTER "" CACHE STRING "Code linter to use")
+
+if(NOT TARGET cci)
+    # TODO:: it would be nice if systemc-cci would only use "export" if it is not
+    # included as a subdirectory, i.e. iff CMAKE_CURRENT_SOURCE_DIR == CMAKE_SOURCE_DIR
+    # Unfortunatly, cci always exports itself, even if it is just a submodule.
+    # Once this has been fixed, the following export can be removed.
+    export(TARGETS systemc
+           NAMESPACE SystemC::
+           FILE SystemCLanguageTargets.cmake)
+    install (EXPORT SystemCLanguageTargets
+             NAMESPACE SystemC::
+             DESTINATION ${SystemCLanguage_INSTALL_CMAKEDIR}
+             COMPONENT dev)
+    # TODO: cci defaults to shared libraries, which causes problems when the
+    # rest is built without fPIC
+    option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
+    add_subdirectory(cci)
+endif()
 
 set(src ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(inc ${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(gen ${CMAKE_CURRENT_BINARY_DIR}/gen)
 
-configure_file(${src}/vcml/models/generic/model_version.h.in
-               ${gen}/vcml/models/generic/model_version.h @ONLY)
+configure_file(${src}/vcml/cci/version.h.in
+               ${gen}/vcml/cci/version.h @ONLY)
 
-add_library(template-model STATIC
-            ${src}/vcml/models/generic/model.cpp)
+add_library(vcml-cci STATIC
+            ${src}/vcml/cci/broker.cpp)
 
-target_compile_options(template-model PRIVATE ${MWR_COMPILER_WARN_FLAGS})
-target_compile_features(template-model PRIVATE cxx_std_17)
+target_compile_options(vcml-cci PRIVATE ${MWR_COMPILER_WARN_FLAGS})
+target_compile_features(vcml-cci PRIVATE cxx_std_17)
 
-target_include_directories(template-model PUBLIC ${inc})
-target_include_directories(template-model PRIVATE ${src})
-target_include_directories(template-model PUBLIC ${gen})
+target_include_directories(vcml-cci PUBLIC ${inc})
+target_include_directories(vcml-cci PRIVATE ${src})
+target_include_directories(vcml-cci PUBLIC ${gen})
+target_include_directories(vcml-cci SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/cci/src)
 
-target_link_libraries(template-model PUBLIC mwr)
-target_link_libraries(template-model PUBLIC vcml)
+target_link_libraries(vcml-cci PUBLIC mwr)
+target_link_libraries(vcml-cci PUBLIC vcml)
+target_link_libraries(vcml-cci PUBLIC cci)
 
-set_target_properties(template-model PROPERTIES DEBUG_POSTFIX "d")
-set_target_properties(template-model PROPERTIES CXX_CLANG_TIDY "${TEMPLATE_MODEL_LINTER}")
-set_target_properties(template-model PROPERTIES VERSION "${TEMPLATE_MODEL_VERSION}")
-set_target_properties(template-model PROPERTIES SOVERSION "${TEMPLATE_MODEL_VERSION_MAJOR}")
+set_target_properties(vcml-cci PROPERTIES DEBUG_POSTFIX "d")
+set_target_properties(vcml-cci PROPERTIES CXX_CLANG_TIDY "${VCML_CCI_LINTER}")
+set_target_properties(vcml-cci PROPERTIES VERSION "${VCML_CCI_VERSION}")
+set_target_properties(vcml-cci PROPERTIES SOVERSION "${VCML_CCI_VERSION_MAJOR}")
 
-if(TEMPLATE_MODEL_COVERAGE)
-    target_compile_options(template-model PUBLIC --coverage)
-    target_link_libraries(template-model PUBLIC -lgcov)
+if(VCML_CCI_COVERAGE)
+    target_compile_options(vcml-cci PUBLIC --coverage)
+    target_link_libraries(vcml-cci PUBLIC -lgcov)
 endif()
 
-if(TEMPLATE_MODEL_TESTS)
+if(VCML_CCI_TESTS)
     enable_testing()
     add_subdirectory(test)
 endif()
 
-install(TARGETS template-model DESTINATION lib)
+install(TARGETS vcml-cci DESTINATION lib)
 install(DIRECTORY ${inc}/ DESTINATION include)
 install(DIRECTORY ${gen}/ DESTINATION include)
 
