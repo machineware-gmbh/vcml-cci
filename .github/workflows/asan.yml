@@ -1,0 +1,45 @@
+name: asan
+
+on:
+  push:
+    branches:
+      - 'main'
+      - 'dev**'
+  pull_request:
+    branches:
+      - 'main'
+
+env:
+  TARGET_ARCH: linux64
+  GITHUB_TOKEN: ${{secrets.CI_TOKEN}}
+  ASAN_OPTIONS: verbosity=1
+  TSAN_OPTIONS: verbosity=1
+  UBSAN_OPTIONS: print_stacktrace=1
+
+jobs:
+  sanitize:
+    name: ${{matrix.sanitizer}}
+    runs-on: self-hosted-ubuntu-22.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        sanitizer: [ASAN, TSAN, UBSAN]
+
+    steps:
+    - name: Checkout Model
+      uses: actions/checkout@v4
+      with:
+        submodules: 'recursive'
+        token: ${{secrets.CI_TOKEN}}
+
+    - name: Configure
+      run: cmake -B BUILD -G Ninja -DCMAKE_BUILD_TYPE=${{matrix.sanitizer}} -DTEMPLATE_MODEL_TESTS=ON .
+
+    - name: Build
+      run: cmake --build BUILD --config ${{matrix.sanitizer}} -j $(nproc)
+
+    - name: Test
+      working-directory: ${{github.workspace}}/BUILD
+      run: ctest -C ${{matrix.sanitizer}} --output-on-failure
+

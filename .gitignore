@@ -1,0 +1,25 @@
+# Ignore build directories
+/BUILD*
+
+# Ingore build files
+*.o
+*.a
+*.so
+*.elf
+*.log
+
+# Ignore eclipse project files
+.project
+.cproject
+.settings
+
+# Apple specific
+.DS_Store
+
+# Visual Studio files
+.vs
+CMakeSettings.json
+
+# Language server
+.clangd
+

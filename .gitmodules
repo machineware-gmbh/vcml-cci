@@ -1,0 +1,8 @@
+[submodule "cmake"]
+	path = cmake
+	url = https://github.com/machineware-gmbh/cmake
+	branch = main
+[submodule "test/googletest"]
+	path = test/googletest
+	url = https://github.com/google/googletest
+	branch = main

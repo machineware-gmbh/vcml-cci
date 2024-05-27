@@ -1,0 +1,49 @@
+#!/bin/bash -e
+
+ ##############################################################################
+ #                                                                            #
+ # Copyright 2022 MachineWare GmbH                                            #
+ # All Rights Reserved                                                        #
+ #                                                                            #
+ # This is unpublished proprietary work and may not be used or disclosed to   #
+ # third parties, copied or duplicated in any form, in whole or in part,      #
+ # without prior written permission of the authors.                           #
+ #                                                                            #
+ ##############################################################################
+
+CC=$(which clang 2>/dev/null)
+test ! -z "$CC" || { echo "clang not found"; exit 1; }
+export CC
+
+CXX=$(which clang++ 2>/dev/null)
+test ! -z "$CXX" || { echo "clang++ not found"; exit 1; }
+export CXX
+
+home="$(cd $(dirname $(dirname ${BASH_SOURCE[0]})) &>/dev/null && pwd)"
+linter=$(which clang-tidy 2>/dev/null)
+bindir=$home/BUILD
+builds=$@
+
+[ -z "$builds" ] && builds="DEBUG RELEASE ASAN TSAN UBSAN"
+
+echo "CC     $CC"
+echo "CXX    $CXX"
+echo "linter $linter"
+echo "builds $builds"
+
+set -e
+
+for type in $builds; do (
+    prefix=$home/BUILD/$type
+    build=$prefix/.BUILD
+
+    cmake -B $build -G Ninja                 \
+          -DCMAKE_BUILD_TYPE=$type           \
+          -DCMAKE_INSTALL_PREFIX=$prefix     \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+          -DTEMPLATE_MODEL_TESTS=ON          \
+          -DTEMPLATE_MODEL_LINTER=$linter    \
+          $home
+
+    cmake --build $build -j $(nproc) -- install
+) done

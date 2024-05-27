@@ -1,0 +1,35 @@
+name: lint
+
+on:
+  push:
+    branches:
+      - 'main'
+      - 'dev**'
+  pull_request:
+    branches:
+      - 'main'
+
+env:
+  BUILD_TYPE: RELEASE
+  GITHUB_TOKEN: ${{secrets.CI_TOKEN}}
+  CXX: clang++
+  CC: clang
+
+jobs:
+  lint:
+    name: lint
+    runs-on: self-hosted-ubuntu-22.04
+
+    steps:
+    - name: Checkout Model
+      uses: actions/checkout@v4
+      with:
+        submodules: 'recursive'
+        token: ${{secrets.CI_TOKEN}}
+
+    - name: Configure
+      run: cmake -B BUILD -G Ninja -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DTEMPLATE_MODEL_TESTS=ON -DTEMPLATE_MODEL_LINTER=clang-tidy .
+
+    - name: Build
+      run: cmake --build BUILD --config ${{env.BUILD_TYPE}} -j $(nproc)
+
