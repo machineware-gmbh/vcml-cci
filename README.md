@@ -38,5 +38,4 @@ If everything went well, the following artifacts will have been installed:
 ----
 ## License
 
-This project is proprietary and confidential work and requires a seperate
-license agreement to use - see the [LICENSE](LICENSE) file for details.
+See the [LICENSE](LICENSE) file for details.
