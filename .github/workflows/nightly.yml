@@ -46,6 +46,7 @@ jobs:
 
     - name: Upload Logs
       uses: actions/upload-artifact@v4
+      if: '!cancelled()'
       with:
         name: vcml-cci-build-logs-${{matrix.os}}
         path: |
@@ -55,6 +56,4 @@ jobs:
             BUILD/Testing/Temporary/LastTest.log
         include-hidden-files: true
         retention-days: 7
-
-
 
