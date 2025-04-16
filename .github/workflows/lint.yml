@@ -31,5 +31,19 @@ jobs:
       run: cmake -B BUILD -G Ninja -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DVCML_CCI_TESTS=ON -DVCML_CCI_LINTER=clang-tidy .
 
     - name: Build
-      run: cmake --build BUILD --config ${{env.BUILD_TYPE}} -j $(nproc)
+      run: cmake --build BUILD
+
+    - name: Upload Logs
+      uses: actions/upload-artifact@v4
+      with:
+        name: vcml-cci-build-logs-lint
+        path: |
+            BUILD/.ninja_log
+            BUILD/CMakeCache.txt
+            BUILD/Testing/Temporary/LastTest.log
+        include-hidden-files: true
+        retention-days: 7
+
+
+
 
