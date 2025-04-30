@@ -5,9 +5,6 @@ on:
     branches:
       - 'main'
       - 'dev**'
-  pull_request:
-    branches:
-      - 'main'
 
 env:
   TARGET_ARCH: linux64
@@ -37,9 +34,20 @@ jobs:
       run: cmake -B BUILD -G Ninja -DCMAKE_BUILD_TYPE=${{matrix.sanitizer}} -DVCML_CCI_TESTS=ON .
 
     - name: Build
-      run: cmake --build BUILD --config ${{matrix.sanitizer}} -j $(nproc)
+      run: cmake --build BUILD
 
     - name: Test
-      working-directory: ${{github.workspace}}/BUILD
-      run: ctest -C ${{matrix.sanitizer}} --output-on-failure
+      run: ctest --test-dir BUILD --output-on-failure
+
+    - name: Upload Logs
+      uses: actions/upload-artifact@v4
+      if: '!cancelled()'
+      with:
+        name: vcml-cci-build-logs-${{matrix.sanitizer}}
+        path: |
+            BUILD/.ninja_log
+            BUILD/CMakeCache.txt
+            BUILD/Testing/Temporary/LastTest.log
+        include-hidden-files: true
+        retention-days: 7
 
