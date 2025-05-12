@@ -34,7 +34,7 @@ jobs:
       uses: actions/upload-artifact@v4
       if: '!cancelled()'
       with:
-        name: vcml-cci-build-logs-lint
+        name: ${{github.event.repository.name}}-logs-lint
         path: |
             BUILD/.ninja_log
             BUILD/CMakeCache.txt
