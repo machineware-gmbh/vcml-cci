@@ -16,7 +16,7 @@ env:
 jobs:
   sanitize:
     name: ${{matrix.sanitizer}}
-    runs-on: self-hosted-ubuntu-22.04
+    runs-on: self-hosted-ubuntu-24.04
 
     strategy:
       fail-fast: false
@@ -31,7 +31,10 @@ jobs:
         token: ${{secrets.CI_TOKEN}}
 
     - name: Configure
-      run: cmake -B BUILD -G Ninja -DCMAKE_BUILD_TYPE=${{matrix.sanitizer}} -DVCML_CCI_TESTS=ON .
+      run: cmake -B BUILD -G Ninja -DCMAKE_BUILD_TYPE=${{matrix.sanitizer}} \
+                                   -DSYSTEMC_UNITY_BUILD=ON \
+                                   -DVCML_UNITY_BUILD=ON \
+                                   -DVCML_CCI_TESTS=ON .
 
     - name: Build
       run: cmake --build BUILD
