@@ -27,10 +27,11 @@ jobs:
 
     - name: Configure
       if: runner.os != 'Windows'
-      run: cmake -B BUILD -G Ninja -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
-                                   -DSYSTEMC_UNITY_BUILD=ON \
-                                   -DVCML_UNITY_BUILD=ON \
-                                   -DVCML_CCI_TESTS=ON .
+      run: |
+        cmake -B BUILD -G Ninja -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
+                                -DSYSTEMC_UNITY_BUILD=ON \
+                                -DVCML_UNITY_BUILD=ON \
+                                -DVCML_CCI_TESTS=ON .
 
     - name: Configure (Windows)
       if: runner.os == 'Windows'
