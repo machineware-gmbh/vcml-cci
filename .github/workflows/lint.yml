@@ -25,10 +25,12 @@ jobs:
         token: ${{secrets.CI_TOKEN}}
 
     - name: Configure
-      run: cmake -B BUILD -G Ninja -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
-                                   -DSYSTEMC_UNITY_BUILD=ON \
-                                   -DVCML_UNITY_BUILD=ON \
-                                   -DVCML_CCI_LINTER=clang-tidy .
+      run: |
+        cmake -B BUILD -G Ninja -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
+                                -DSYSTEMC_UNITY_BUILD=ON \
+                                -DVCML_UNITY_BUILD=ON \
+                                -DVCML_CCI_TESTS=ON \
+                                -DVCML_CCI_LINTER=clang-tidy .
 
     - name: Build
       run: cmake --build BUILD
