@@ -18,7 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [self-hosted-ubuntu-24.04, self-hosted-ubuntu-22.04, self-hosted-ubuntu-20.04, self-hosted-rhel-8, self-hosted-ubuntu-24.04-arm64, self-hosted-windows-2022]
+        os: [ubuntu-24.04, ubuntu-22.04, ubuntu-24.04-arm, windows-2022]
 
     steps:
     - name: Checkout VCML CCI
@@ -64,3 +64,50 @@ jobs:
         include-hidden-files: true
         retention-days: 7
 
+  cmake-alma8:
+      name: cmake (almalinux-8)
+      runs-on: ubuntu-latest
+      container:
+          image: docker.io/almalinux:8
+
+      steps:
+      - name: Install dependencies
+        run: |
+            dnf install -y dnf-utils
+            dnf config-manager --set-enabled powertools
+            dnf -y groupinstall "Development Tools"
+            dnf -y install epel-release cmake ninja-build
+
+      - name: Checkout VCML CCI
+        uses: actions/checkout@v6
+        with:
+          submodules: 'recursive'
+          token: ${{secrets.CI_TOKEN}}
+
+      - name: Configure
+        run: |
+          cmake -B BUILD -G Ninja -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
+                                  -DSYSTEMC_UNITY_BUILD=ON \
+                                  -DVCML_UNITY_BUILD=ON \
+                                  -DVCML_CCI_TESTS=ON .
+
+
+      - name: Build
+        run: cmake --build BUILD
+
+      - name: Test
+        working-directory: BUILD
+        run: ctest -C ${{env.BUILD_TYPE}} --output-on-failure
+
+      - name: Upload Logs
+        uses: actions/upload-artifact@v7
+        if: '!cancelled()'
+        with:
+          name: ${{github.event.repository.name}}-logs-almalinux-8
+          path: |
+              BUILD/.ninja_log
+              BUILD/CMakeCache.txt
+              BUILD/msbuild.binlog
+              BUILD/Testing/Temporary/LastTest.log
+          include-hidden-files: true
+          retention-days: 7
