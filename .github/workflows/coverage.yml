@@ -13,7 +13,7 @@ env:
 jobs:
   coverage:
     name: coverage
-    runs-on: self-hosted-ubuntu-24.04
+    runs-on: ubuntu-24.04
 
     steps:
     - name: Checkout VCML CCI
@@ -36,6 +36,14 @@ jobs:
     - name: Test
       working-directory: BUILD
       run: ctest --output-on-failure
+
+    - name: Setup Python
+      uses: actions/setup-python@v7
+      with:
+        python-version: '3.x'
+
+    - name: Install gcovr
+      run: pip install gcovr
 
     - name: Generate Coverage Report
       run: |
@@ -62,4 +70,3 @@ jobs:
             BUILD/Testing/Temporary/LastTest.log
         include-hidden-files: true
         retention-days: 7
-
